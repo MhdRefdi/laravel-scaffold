@@ -18,7 +18,7 @@ class ScaffoldCommand extends Command
         $variable = Str::lower($model);
         $variables = Str::plural($variable);
 
-        $this->generate_file($model);
+        $this->generate_file($model, $variable);
 
         $this->generate_repository($model);
 
@@ -28,9 +28,18 @@ class ScaffoldCommand extends Command
         $this->view_show($model , $variable);
         $this->view_create($model , $variable);
         $this->view_edit($model , $variable);
+
+        // check jika belum melakukan storage link
+
+        if (!FIle::exists(public_path('storage'))) {
+            $this->call('storage:link');
+        }
+        $this->comment('
+        Done!, Happy Coding :)
+        ');
     }
 
-    public function generate_file($model)
+    public function generate_file($model, $variable)
     {
         $this->call('make:model', [
             'name' => $model,
