@@ -21,7 +21,8 @@ class {{ class }}
     {
         \DB::beginTransaction();
         try {
-            $data = [];
+            $data['rows'] = [''];
+
             \DB::commit();
 
             return view('backend.{{ variable }}.index', $data);
