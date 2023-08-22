@@ -1,0 +1,122 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use Illuminate\Http\Request;
+use App\Http\Requests\{{ model }}\StoreRequest;
+use App\Http\Requests\{{ model }}\UpdateRequest;
+use App\Repositories\Eloquent\{{ model }}Repository;
+
+class {{ class }}
+{
+    protected $model;
+
+    public function __construct({{ model }}Repository $model)
+    {
+        $this->model = $model;
+    }
+
+    public function index()
+    {
+        \DB::beginTransaction();
+        try {
+            $data = [];
+            \DB::commit();
+
+            return view('backend.{{ variable }}.index', $data);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function create()
+    {
+        \DB::beginTransaction();
+        try {
+            return view('backend.{{ variable }}.create');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function store(StoreRequest $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $data = $request->validated();
+
+            $this->model->store($data);
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+
+        return back()->withSuccess('{{ model }} berhasil ditambah.');
+    }
+
+    public function show($id)
+    {
+        \DB::beginTransaction();
+        try {
+            $data['{{ variable }}'] = $this->model->find($id);
+            \DB::commit();
+
+            return view('backend.{{ variable }}.show', $data);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function edit($id)
+    {
+        \DB::beginTransaction();
+        try {
+            $data['{{ variable }}'] = $this->model->find($id);
+            \DB::commit();
+
+            return view('backend.{{ variable }}.edit', $data);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update(UpdateRequest $request, $id)
+    {
+        \DB::beginTransaction();
+        try {
+            $data = $request->validated();
+            ${{ variable }} = $this->model->find($id);
+
+            ${{ variable }}->update($data);
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+
+        return back()->withSuccess('{{ model }} berhasil diubah.');
+    }
+
+    public function destroy($id)
+    {
+        \DB::beginTransaction();
+        try {
+            $this->model->delete($id);
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+
+        return back()->withSuccess('{{ model }} berhasil dihapus.');
+    }
+}

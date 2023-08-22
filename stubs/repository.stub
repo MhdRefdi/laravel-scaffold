@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Repositories\Eloquent;
+
+use App\Models\{{ model }};
+
+class {{ model }}Repository extends BaseRepository
+{
+     protected $model;
+
+    /**
+     * Creates a new instance of the class.
+     *
+     * @param {{ model }} $model The {{ model }} model.
+     */
+    public function __construct({{ model }} $model)
+    {
+        $this->model = $model;
+    }
+}

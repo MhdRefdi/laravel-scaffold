@@ -1,0 +1,25 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Traits\HasUuid;
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} extends Model
+{
+    use HasFactory, HasUuid;
+
+    public $fillable = [];
+
+    public function getHashFields()
+    {
+        return [];
+    }
+
+    public function getImageFields()
+    {
+        return [];
+    }
+}
