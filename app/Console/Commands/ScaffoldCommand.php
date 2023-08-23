@@ -22,18 +22,19 @@ class ScaffoldCommand extends Command
 
         $this->generate_repository($model);
 
-        $this->generate_views($variable);
+        $this->directory_copy(base_path("stubs/views"), resource_path("views/backend/{$variable}"));
 
-        $this->view_index($model, $variables, $variable);
-        $this->view_show($model , $variable);
-        $this->view_create($model , $variable);
-        $this->view_edit($model , $variable);
+        $this->replace_placeholder_view('index', $model, $variables, $variable);
+        $this->replace_placeholder_view('show', $model, $variables, $variable);
+        $this->replace_placeholder_view('edit', $model, $variables, $variable);
+        $this->replace_placeholder_view('create', $model, $variables, $variable);
 
         // check jika belum melakukan storage link
 
         if (!FIle::exists(public_path('storage'))) {
             $this->call('storage:link');
         }
+
         $this->comment('
         Done!, Happy Coding :)
         ');
@@ -57,26 +58,36 @@ class ScaffoldCommand extends Command
             'name' => "$model/UpdateRequest",
         ]);
 
-        $controller_path = app_path("Http/Controllers/{$model}Controller.php");
-        $controller_content = File::get($controller_path);
-        $updated_controller_content = str_replace('{{ variable }}', $variable, $controller_content);
-        File::put($controller_path, $updated_controller_content);
+        $this->replace_placeholder(app_path("Http/Controllers/{$model}Controller.php") , '{{ variable }}', $variable);
     }
 
     public function generate_repository($model)
     {
-        $repository_stub_path = base_path('stubs/repository.stub');
-        $repository_copied_path = app_path("Repositories/Eloquent/{$model}Repository.php");
-        File::copy($repository_stub_path, $repository_copied_path);
+        $this->file_copy(base_path('stubs/repository.stub'), app_path("Repositories/Eloquent/{$model}Repository.php"));
+        $this->replace_placeholder(app_path("Repositories/Eloquent/{$model}Repository.php") , '{{ model }}', $model);
 
-        $repository_content = File::get($repository_copied_path);
-        $updated_repository_content = str_replace('{{ model }}', $model, $repository_content);
-        File::put($repository_copied_path, $updated_repository_content);
     }
 
-    public function view_index($model, $variables, $variable)
+    public function file_copy($path, $target)
     {
-        $view_copied_path = base_path("resources/views/backend/{$variable}/index.blade.php");
+        File::copy($path, $target);
+    }
+
+    public function directory_copy($path, $target)
+    {
+        File::copyDirectory($path, $target);
+    }
+
+    public function replace_placeholder($path, $search, $replace)
+    {
+        $content = File::get($path);
+        $updated_content = str_replace($search, $replace, $content);
+        File::put($path, $updated_content);
+    }
+
+    public function replace_placeholder_view($view, $model, $variables, $variable)
+    {
+        $view_copied_path = base_path("resources/views/backend/{$variable}/{$view}.blade.php");
         $view_content = File::get($view_copied_path);
         $updated_view_content = str_replace([
             '{{ model }}',
@@ -89,57 +100,5 @@ class ScaffoldCommand extends Command
         ], $view_content);
 
         File::put($view_copied_path, $updated_view_content);
-    }
-
-    public function view_show($model, $variable)
-    {
-        $view_copied_path = base_path("resources/views/backend/{$variable}/show.blade.php");
-        $view_content = File::get($view_copied_path);
-        $updated_view_content = str_replace([
-            '{{ model }}',
-            '{{ variable }}',
-        ], [
-            $model,
-            $variable,
-        ], $view_content);
-
-        File::put($view_copied_path, $updated_view_content);
-    }
-
-    public function view_create($model, $variable)
-    {
-        $view_copied_path = base_path("resources/views/backend/{$variable}/create.blade.php");
-        $view_content = File::get($view_copied_path);
-        $updated_view_content = str_replace([
-            '{{ model }}',
-            '{{ variable }}',
-        ], [
-            $model,
-            $variable,
-        ], $view_content);
-
-        File::put($view_copied_path, $updated_view_content);
-    }
-
-    public function view_edit($model, $variable)
-    {
-        $view_copied_path = base_path("resources/views/backend/{$variable}/edit.blade.php");
-        $view_content = File::get($view_copied_path);
-        $updated_view_content = str_replace([
-            '{{ model }}',
-            '{{ variable }}',
-        ], [
-            $model,
-            $variable,
-        ], $view_content);
-
-        File::put($view_copied_path, $updated_view_content);
-    }
-
-    public function generate_views($variable)
-    {
-        $views_stub_path = base_path('stubs/views');
-        $views_copied_path = base_path("resources/views/backend/{$variable}");
-        File::copyDirectory($views_stub_path, $views_copied_path);
     }
 }
