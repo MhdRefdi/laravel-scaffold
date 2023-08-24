@@ -107,7 +107,7 @@ class BaseRepository implements EloquentRepositoryInterface
             ) {
 
                 $value = request()->file($fillable)->hashName();
-                request()->file($fillable)->store("uploads/" . $this->getModelName(true) . "/{$value}");
+                request()->file($fillable)->store("uploads/" . $this->getModelName(true));
                 $fills[$fillable] = $value;
             } else {
                 if (
@@ -162,7 +162,7 @@ class BaseRepository implements EloquentRepositoryInterface
                 }
 
                 $value = request()->file($fillable)->hashName();
-                request()->file($fillable)->store("uploads/" . $this->getModelName(true) . "/{$value}");
+                request()->file($fillable)->store("uploads/" . $this->getModelName(true));
 
                 $fills[$fillable] = $value;
             } else {
