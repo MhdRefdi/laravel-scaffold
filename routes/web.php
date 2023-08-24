@@ -21,7 +21,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('backend')->name('backend.')->group(function(){
+    Route::prefix('master-data')->name('backend.')->group(function(){
         // route here
     });
 });
